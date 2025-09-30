@@ -1,19 +1,21 @@
-import styled from "@emotion/styled";
 import type { PropsWithChildren } from "react";
-
-const Root = styled.button`
-  padding: ${({ theme }) => theme.spacing(2)} ${({ theme }) => theme.spacing(3)};
-  border-radius: 8px;
-  border: none;
-  color: white;
-  background: ${({ theme }) => theme.colors.primary};
-  cursor: pointer;
-`;
+import "./styles.css";
 
 type ButtonProps = PropsWithChildren<{
   onClick?: () => void;
+  color?: "primary" | "secondary" | "tertiary";
+  isBorder?: boolean;
+  disabled?: boolean;
 }>;
 
-export function Button({ children, onClick }: ButtonProps) {
-  return <Root onClick={onClick}>{children}</Root>;
+export function Button({ children, color, onClick, disabled, isBorder }: ButtonProps) {
+  return (
+    <button
+      className={`button ${color ?? ""} ${isBorder ? "border" : ""}`}
+      onClick={onClick}
+      disabled={disabled}
+    >
+      {children}
+    </button>
+  );
 }
