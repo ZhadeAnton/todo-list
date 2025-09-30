@@ -10,6 +10,7 @@ export default function HomePage() {
       <h2>Главная</h2>
       <p>Добро пожаловать!</p>
       <Button onClick={() => navigate("/login")}>На авторизацию</Button>
+      <Button onClick={() => navigate("/registration")}>На регистрацию</Button>
     </div>
   );
 }
