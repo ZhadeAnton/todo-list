@@ -8,8 +8,8 @@ export default function LoginPage() {
   return (
     <div className="login">
       <h2>Авторизация</h2>
-      <input placeholder="Логин" />
-      <input placeholder="Пароль" type="password" />
+      <input color="primary" placeholder="Логин" />
+      <input color="primary" placeholder="Пароль" type="password" />
 
       <div>{counter}</div>
 
