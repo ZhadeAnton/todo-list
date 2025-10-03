@@ -1,0 +1,18 @@
+    input {
+        padding: 10px 20px;
+        border-radius: 5px;
+        border: 1px solid #515be6c5;
+        color: #515be6c5;
+    }
+    input.primary {
+        border: 1px solid #515be6c5;
+        color: #e65151c5;
+    }
+    input.secondary {
+        border: 1px solid #515be6c5;
+        color: #515be6c5;
+    }
+    input.tertiary {
+        border: 1px solid #515be6c5;
+        color: #515be6c5;
+    }

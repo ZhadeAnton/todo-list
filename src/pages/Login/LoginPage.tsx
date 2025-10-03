@@ -18,11 +18,10 @@ export default function LoginPage() {
   }, []);
 
   return (
-    <div>
-      <main className="login">
-        <h2>Авторизация</h2>
-        <input placeholder="Логин" />
-        <input placeholder="Пароль" type="password" />
+    <div className="login">
+      <h2>Авторизация</h2>
+      <input color="primary" placeholder="Логин" />
+      <input color="primary" placeholder="Пароль" type="password" />
 
         <br />
         <img src={dog} alt="dog" width={240} height={200} />
