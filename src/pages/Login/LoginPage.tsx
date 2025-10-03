@@ -1,28 +1,37 @@
 import { Button } from "@shared/ui/button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./styles.css";
 
 export default function LoginPage() {
-  const [counter, setCounter] = useState(1);
+  const [dog, setDog] = useState("");
+
+  function fetchDog() {
+    fetch("https://dog.ceo/api/breeds/image/random")
+      .then((res) => res.json())
+      .then((data) => {
+        setDog(data.message);
+      });
+  }
+
+  useEffect(() => {
+    fetchDog();
+  }, []);
 
   return (
-    <div className="login">
-      <h2>Авторизация</h2>
-      <input placeholder="Логин" />
-      <input placeholder="Пароль" type="password" />
+    <div>
+      <main className="login">
+        <h2>Авторизация</h2>
+        <input placeholder="Логин" />
+        <input placeholder="Пароль" type="password" />
 
-      <div>{counter}</div>
+        <br />
+        <img src={dog} alt="dog" width={240} height={200} />
+        <br />
 
-      <Button color="primary" onClick={() => setCounter(counter + 1)} isBorder={true}>
-        Увеличить
-      </Button>
-      <Button color="tertiary" onClick={() => setCounter(counter - 1)} isBorder={true}>
-        Уменьшить
-      </Button>
-
-      {/* <Button color="tertiary" onClick={() => setIsChecked(!isChecked)} isBorder={true}>
-        Регистрация
-      </Button> */}
+        <Button color="primary" onClick={() => fetchDog()} isBorder={true}>
+          Получить нового пса
+        </Button>
+      </main>
     </div>
   );
 }
