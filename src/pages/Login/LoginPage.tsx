@@ -1,21 +1,13 @@
 import { Button } from "@shared/ui/button";
-import { useEffect, useState } from "react";
+import { useApi } from "./useApi";
+import { useManyApi } from "./useManyApi";
+import { Loader } from "@shared/ui/loader";
 import "./styles.css";
 
+
 export default function LoginPage() {
-  const [dog, setDog] = useState("");
-
-  function fetchDog() {
-    fetch("https://dog.ceo/api/breeds/image/random")
-      .then((res) => res.json())
-      .then((data) => {
-        setDog(data.message);
-      });
-  }
-
-  useEffect(() => {
-    fetchDog();
-  }, []);
+  const { dog, fetchDog, isLoading } = useApi();
+  const { dogs, fetchDogs, isLoading: isLoadingMany } = useManyApi();
 
   return (
     <div className="login">
@@ -23,14 +15,25 @@ export default function LoginPage() {
       <input color="primary" placeholder="Логин" />
       <input color="primary" placeholder="Пароль" type="password" />
 
-        <br />
-        <img src={dog} alt="dog" width={240} height={200} />
-        <br />
+      <br />
+      {isLoading ? <Loader size="large">Загрузка...</Loader> : <img src={dog} alt="dog" width={240} height={200} />}
+      <br />
 
-        <Button color="primary" onClick={() => fetchDog()} isBorder={true}>
-          Получить нового пса
-        </Button>
-      </main>
+      <Button color="primary" onClick={() => fetchDog()} isBorder={true}>
+        Получить нового пса
+      </Button>
+
+      <Button color="secondary" onClick={() => fetchDogs()} isBorder={true}>
+        Получить 5 псов
+      </Button>
+      <br />
+      {isLoadingMany ? (
+        <Loader size="large">Загрузка...</Loader>
+      ) : (
+        dogs.map((dog) => <img src={dog} alt="dog" width={240} height={200} />)
+      )}
+      <Loader size="large">Загрузка...</Loader>
     </div>
+    
   );
 }
