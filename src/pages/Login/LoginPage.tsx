@@ -2,8 +2,8 @@ import { Button } from "@shared/ui/button";
 import { useApi } from "./useApi";
 import { useManyApi } from "./useManyApi";
 import { Loader } from "@shared/ui/loader";
+import TextField from "@mui/material/TextField";
 import "./styles.css";
-
 
 export default function LoginPage() {
   const { dog, fetchDog, isLoading } = useApi();
@@ -12,11 +12,15 @@ export default function LoginPage() {
   return (
     <div className="login">
       <h2>Авторизация</h2>
-      <input color="primary" placeholder="Логин" />
-      <input color="primary" placeholder="Пароль" type="password" />
+      <TextField color="primary" placeholder="Логин" type="text" />
+      <TextField color="primary" placeholder="Пароль" type="password" />
 
       <br />
-      {isLoading ? <Loader size="large">Загрузка...</Loader> : <img src={dog} alt="dog" width={240} height={200} />}
+      {isLoading ? (
+        <Loader size="large">Загрузка...</Loader>
+      ) : (
+        <img src={dog} alt="dog" width={240} height={200} />
+      )}
       <br />
 
       <Button color="primary" onClick={() => fetchDog()} isBorder={true}>
@@ -34,6 +38,5 @@ export default function LoginPage() {
       )}
       <Loader size="large">Загрузка...</Loader>
     </div>
-    
   );
 }

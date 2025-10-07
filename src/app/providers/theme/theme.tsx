@@ -1,8 +1,24 @@
-import { ThemeProvider } from "@emotion/react";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
 import type { PropsWithChildren } from "react";
 import { useMemo } from "react";
 
-const baseTheme = {
+const muiTheme = createTheme({
+  palette: {
+    primary: {
+      main: "#3f51b5",
+    },
+    secondary: {
+      main: "#f50057",
+    },
+  },
+  typography: {
+    fontFamily: "Roboto, Arial, sans-serif",
+  },
+});
+
+// Расширяем MUI тему нашими кастомными свойствами
+const extendedTheme = {
+  ...muiTheme,
   colors: {
     primary: "#3f51b5",
     text: "#222",
@@ -12,6 +28,6 @@ const baseTheme = {
 };
 
 export function AppThemeProvider({ children }: PropsWithChildren) {
-  const theme = useMemo(() => baseTheme, []);
+  const theme = useMemo(() => extendedTheme, []);
   return <ThemeProvider theme={theme}>{children}</ThemeProvider>;
 }
