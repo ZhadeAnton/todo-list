@@ -1,42 +1,39 @@
-import { Button } from "@shared/ui/button";
-import { useApi } from "./useApi";
-import { useManyApi } from "./useManyApi";
-import { Loader } from "@shared/ui/loader";
-import TextField from "@mui/material/TextField";
+import { Button } from "@mui/material";
+import * as React from "react";
+import { useState } from "react";
+import Box from "@mui/material/Box";
+import Tab from "@mui/material/Tab";
+import TabContext from "@mui/lab/TabContext";
+import TabList from "@mui/lab/TabList";
+import TabPanel from "@mui/lab/TabPanel";
+import Registration from "../../widget/Registration/Registration";
+import Autorization from "../../widget/Autorization/Autorization";
 import "./styles.css";
 
 export default function LoginPage() {
-  const { dog, fetchDog, isLoading } = useApi();
-  const { dogs, fetchDogs, isLoading: isLoadingMany } = useManyApi();
-
+  const [value, setValue] = useState("1");
+  const handleChange = (event: React.SyntheticEvent, newValue: string) => {
+    setValue(newValue);
+  };
   return (
     <div className="login">
       <h2>Авторизация</h2>
-      <TextField color="primary" placeholder="Логин" type="text" />
-      <TextField color="primary" placeholder="Пароль" type="password" />
-
-      <br />
-      {isLoading ? (
-        <Loader size="large">Загрузка...</Loader>
-      ) : (
-        <img src={dog} alt="dog" width={240} height={200} />
-      )}
-      <br />
-
-      <Button color="primary" onClick={() => fetchDog()} isBorder={true}>
-        Получить нового пса
-      </Button>
-
-      <Button color="secondary" onClick={() => fetchDogs()} isBorder={true}>
-        Получить 5 псов
-      </Button>
-      <br />
-      {isLoadingMany ? (
-        <Loader size="large">Загрузка...</Loader>
-      ) : (
-        dogs.map((dog) => <img src={dog} alt="dog" width={240} height={200} />)
-      )}
-      <Loader size="large">Загрузка...</Loader>
+      <Box sx={{ width: "100%", typography: "body1" }}>
+        <TabContext value={value}>
+          <Box sx={{ borderBottom: 1, borderColor: "divider" }} className="box">
+            <TabList onChange={handleChange} aria-label="lab API tabs example" className="tab-list">
+              <Tab label="Авторизация" value="1" />
+              <Tab label="Регистрация" value="2" />
+            </TabList>
+          </Box>
+          <TabPanel value="1">
+            <Autorization />
+          </TabPanel>
+          <TabPanel value="2">
+            <Registration />
+          </TabPanel>
+        </TabContext>
+      </Box>
     </div>
   );
 }
