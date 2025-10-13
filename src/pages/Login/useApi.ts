@@ -1,10 +1,9 @@
-import { useState } from "react"
+import { useState } from "react";
 import { API_URL } from "./const";
 
 export function useApi() {
   const [dog, setDog] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-
 
   function fetchDog() {
     setIsLoading(true);
@@ -16,10 +15,9 @@ export function useApi() {
       });
   }
 
-//   useEffect(() => {
-//     fetchDog();
-//   }, []);
+  //   useEffect(() => {
+  //     fetchDog();
+  //   }, []);
 
   return { dog, fetchDog, isLoading };
-
 }

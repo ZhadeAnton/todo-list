@@ -1,4 +1,4 @@
-import * as React from "react";
+import { useState, useId } from "react";
 import TextField from "@mui/material/TextField";
 import { Button, CircularProgress, Alert } from "@mui/material";
 import { login } from "@shared/api/auth";
@@ -6,11 +6,13 @@ import type { LoginResponse } from "@shared/mocks/handlers/auth";
 import "./styles.css";
 
 export default function BasicTextFields() {
-  const [name, setName] = React.useState("");
-  const [password, setPassword] = React.useState("");
-  const [loading, setLoading] = React.useState(false);
-  const [error, setError] = React.useState<string | null>(null);
-  const [success, setSuccess] = React.useState<LoginResponse | null>(null);
+  const usernameId = useId();
+  const passwordId = useId();
+  const [name, setName] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<LoginResponse | null>(null);
 
   const handleLogin = async () => {
     setLoading(true);
@@ -52,7 +54,7 @@ export default function BasicTextFields() {
       )}
 
       <TextField
-        id="username-field"
+        id={usernameId}
         label="Имя пользователя"
         variant="filled"
         value={name}
@@ -63,7 +65,7 @@ export default function BasicTextFields() {
         fullWidth
       />
       <TextField
-        id="password-field"
+        id={passwordId}
         label="Пароль"
         variant="filled"
         type="password"

@@ -2,11 +2,11 @@ import type { ChangeEvent } from "react";
 import "./styles.css";
 
 type InputProps = {
-    color?: "primary" | "secondary" | "tertiary";
+  color?: "primary" | "secondary" | "tertiary";
   placeholder?: string;
   value?: string;
   type?: string;
-   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
+  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
 };
 
 export function Input({ placeholder, type = "text", value, onChange }: InputProps) {

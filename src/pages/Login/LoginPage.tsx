@@ -1,5 +1,4 @@
-import { Button } from "@mui/material";
-import * as React from "react";
+import type * as React from "react";
 import { useState } from "react";
 import Box from "@mui/material/Box";
 import Tab from "@mui/material/Tab";
@@ -12,7 +11,7 @@ import "./styles.css";
 
 export default function LoginPage() {
   const [value, setValue] = useState("1");
-  const handleChange = (event: React.SyntheticEvent, newValue: string) => {
+  const handleChange = (_event: React.SyntheticEvent, newValue: string) => {
     setValue(newValue);
   };
   return (

@@ -10,7 +10,9 @@ export default function HomePage() {
     <div className="home">
       <h2>Главная</h2>
       <p>Добро пожаловать!</p>
-      <Button color="primary" onClick={() => navigate("/login")}>На авторизацию</Button>
+      <Button color="primary" onClick={() => navigate("/login")}>
+        На авторизацию
+      </Button>
       <Input placeholder="Введите ваше имя" />
     </div>
   );

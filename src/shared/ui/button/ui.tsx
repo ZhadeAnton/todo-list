@@ -11,6 +11,7 @@ type ButtonProps = PropsWithChildren<{
 export function Button({ children, color, onClick, disabled, isBorder }: ButtonProps) {
   return (
     <button
+      type="button"
       className={`button ${color ?? ""} ${isBorder ? "border" : ""}`}
       onClick={onClick}
       disabled={disabled}
