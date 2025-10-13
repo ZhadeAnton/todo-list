@@ -1,42 +1,87 @@
 import * as React from "react";
-import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
-import { Button } from "@mui/material";
+import { Button, CircularProgress, Alert } from "@mui/material";
+import { login } from "@shared/api/auth";
+import type { LoginResponse } from "@shared/mocks/handlers/auth";
 import "./styles.css";
 
-  export default function BasicTextFields() {
-    const [name, setName] = React.useState("");
-    const [password, setPassword] = React.useState("");
-  
-    const showAlert = (message: string) => {
-      alert(message);
-    };
+export default function BasicTextFields() {
+  const [name, setName] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [loading, setLoading] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
+  const [success, setSuccess] = React.useState<LoginResponse | null>(null);
+
+  const handleLogin = async () => {
+    setLoading(true);
+    setError(null);
+    setSuccess(null);
+
+    try {
+      const response = await login({
+        username: name,
+        password: password,
+      });
+
+      if (response.success) {
+        setSuccess(response);
+        // Здесь можно сохранить токен и данные пользователя
+        console.log("Успешная авторизация:", response);
+      } else {
+        setError(response.message || "Ошибка авторизации");
+      }
+    } catch (err) {
+      setError("Произошла ошибка при подключении к серверу");
+      console.error("Ошибка авторизации:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="Autorization">
+      {error && (
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {error}
+        </Alert>
+      )}
+      {success && (
+        <Alert severity="success" sx={{ mb: 2 }}>
+          Добро пожаловать, {success.user?.username}!
+        </Alert>
+      )}
+
       <TextField
-        id="filled-basic"
+        id="username-field"
         label="Имя пользователя"
         variant="filled"
+        value={name}
         onChange={(e) => {
           setName(e.target.value);
         }}
+        disabled={loading}
+        fullWidth
       />
       <TextField
-        id="filled-basic"
+        id="password-field"
         label="Пароль"
         variant="filled"
+        type="password"
+        value={password}
         onChange={(e) => {
           setPassword(e.target.value);
         }}
+        disabled={loading}
+        fullWidth
       />
       <Button
         color="primary"
         variant="contained"
-        onClick={() => {
-          showAlert(name + " " + password);
-        }}
+        onClick={handleLogin}
+        disabled={loading || !name || !password}
+        fullWidth
       >
-        Войти
+        {loading ? <CircularProgress size={24} /> : "Войти"}
       </Button>
     </div>
   );

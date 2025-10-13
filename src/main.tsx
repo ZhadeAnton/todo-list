@@ -7,16 +7,34 @@ import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 import "./index.css";
 
+// Асинхронная функция для инициализации приложения
+async function enableMocking() {
+  if (!import.meta.env.DEV) {
+    return;
+  }
+
+  const { worker } = await import("@shared/mocks/browser");
+
+  // Запускаем MSW только в dev режиме
+  return worker.start({
+    onUnhandledRequest: "bypass", // Пропускаем необработанные запросы
+  });
+}
+
 const container = document.getElementById("root");
 if (!container) {
   throw new Error("Root container not found");
 }
-createRoot(container).render(
-  <StrictMode>
-    <AppThemeProvider>
-      <DevRouter>
-        <DevRoutes />
-      </DevRouter>
-    </AppThemeProvider>
-  </StrictMode>,
-);
+
+// Запускаем MSW перед рендером приложения
+enableMocking().then(() => {
+  createRoot(container).render(
+    <StrictMode>
+      <AppThemeProvider>
+        <DevRouter>
+          <DevRoutes />
+        </DevRouter>
+      </AppThemeProvider>
+    </StrictMode>,
+  );
+});
