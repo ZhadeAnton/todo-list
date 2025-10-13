@@ -1,8 +1,9 @@
 import { useState, useId } from "react";
+import { useMutation } from "@tanstack/react-query";
 import TextField from "@mui/material/TextField";
 import { Button, CircularProgress, Alert } from "@mui/material";
 import { login } from "@shared/api/auth";
-import type { LoginResponse } from "@shared/mocks/handlers/auth";
+import type { LoginRequest, LoginResponse } from "@shared/mocks/handlers/auth";
 import "./styles.css";
 
 export default function BasicTextFields() {
@@ -10,46 +11,43 @@ export default function BasicTextFields() {
   const passwordId = useId();
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<LoginResponse | null>(null);
 
-  const handleLogin = async () => {
-    setLoading(true);
-    setError(null);
-    setSuccess(null);
-
-    try {
-      const response = await login({
-        username: name,
-        password: password,
-      });
-
-      if (response.success) {
-        setSuccess(response);
+  // Используем useMutation для авторизации
+  const loginMutation = useMutation<LoginResponse, Error, LoginRequest>({
+    mutationFn: login,
+    onSuccess: (data) => {
+      if (data.success) {
         // Здесь можно сохранить токен и данные пользователя
-        console.log("Успешная авторизация:", response);
-      } else {
-        setError(response.message || "Ошибка авторизации");
+        console.log("Успешная авторизация:", data);
       }
-    } catch (err) {
-      setError("Произошла ошибка при подключении к серверу");
-      console.error("Ошибка авторизации:", err);
-    } finally {
-      setLoading(false);
-    }
+    },
+    onError: (error) => {
+      console.error("Ошибка авторизации:", error);
+    },
+  });
+
+  const handleLogin = () => {
+    loginMutation.mutate({
+      username: name,
+      password: password,
+    });
   };
 
   return (
     <div className="Autorization">
-      {error && (
+      {loginMutation.isError && (
         <Alert severity="error" sx={{ mb: 2 }}>
-          {error}
+          {loginMutation.error?.message || "Произошла ошибка при подключении к серверу"}
         </Alert>
       )}
-      {success && (
+      {loginMutation.isSuccess && !loginMutation.data.success && (
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {loginMutation.data.message || "Ошибка авторизации"}
+        </Alert>
+      )}
+      {loginMutation.isSuccess && loginMutation.data.success && (
         <Alert severity="success" sx={{ mb: 2 }}>
-          Добро пожаловать, {success.user?.username}!
+          Добро пожаловать, {loginMutation.data.user?.username}!
         </Alert>
       )}
 
@@ -61,7 +59,7 @@ export default function BasicTextFields() {
         onChange={(e) => {
           setName(e.target.value);
         }}
-        disabled={loading}
+        disabled={loginMutation.isPending}
         fullWidth
       />
       <TextField
@@ -73,17 +71,17 @@ export default function BasicTextFields() {
         onChange={(e) => {
           setPassword(e.target.value);
         }}
-        disabled={loading}
+        disabled={loginMutation.isPending}
         fullWidth
       />
       <Button
         color="primary"
         variant="contained"
         onClick={handleLogin}
-        disabled={loading || !name || !password}
+        disabled={loginMutation.isPending || !name || !password}
         fullWidth
       >
-        {loading ? <CircularProgress size={24} /> : "Войти"}
+        {loginMutation.isPending ? <CircularProgress size={24} /> : "Войти"}
       </Button>
     </div>
   );

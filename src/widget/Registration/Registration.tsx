@@ -1,8 +1,9 @@
 import { useState, useId } from "react";
+import { useMutation } from "@tanstack/react-query";
 import TextField from "@mui/material/TextField";
 import { Button, CircularProgress, Alert } from "@mui/material";
 import { register } from "@shared/api/auth";
-import type { RegisterResponse } from "@shared/mocks/handlers/auth";
+import type { RegisterRequest, RegisterResponse } from "@shared/mocks/handlers/auth";
 import "./styles.css";
 
 export default function Registration() {
@@ -14,62 +15,63 @@ export default function Registration() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<RegisterResponse | null>(null);
+  const [validationError, setValidationError] = useState<string | null>(null);
 
-  const handleRegister = async () => {
+  // Используем useMutation для регистрации
+  const registerMutation = useMutation<RegisterResponse, Error, RegisterRequest>({
+    mutationFn: register,
+    onSuccess: (data) => {
+      if (data.success) {
+        console.log("Успешная регистрация:", data);
+        // Очищаем форму после успешной регистрации
+      }
+    },
+    onError: (error) => {
+      console.error("Ошибка регистрации:", error);
+    },
+  });
+
+  const handleRegister = () => {
     // Валидация
     if (password !== confirmPassword) {
-      setError("Пароли не совпадают");
+      setValidationError("Пароли не совпадают");
       return;
     }
 
     if (password.length < 6) {
-      setError("Пароль должен быть минимум 6 символов");
+      setValidationError("Пароль должен быть минимум 6 символов");
       return;
     }
 
-    setLoading(true);
-    setError(null);
-    setSuccess(null);
-
-    try {
-      const response = await register({
-        username: username,
-        email: email,
-        password: password,
-      });
-
-      if (response.success) {
-        setSuccess(response);
-        console.log("Успешная регистрация:", response);
-        // Очищаем форму после успешной регистрации
-        setUsername("");
-        setEmail("");
-        setPassword("");
-        setConfirmPassword("");
-      } else {
-        setError(response.message || "Ошибка регистрации");
-      }
-    } catch (err) {
-      setError("Произошла ошибка при подключении к серверу");
-      console.error("Ошибка регистрации:", err);
-    } finally {
-      setLoading(false);
-    }
+    setValidationError(null);
+    registerMutation.mutate({
+      username: username,
+      email: email,
+      password: password,
+    });
   };
 
   return (
     <div className="Registration">
-      {error && (
+      {validationError && (
         <Alert severity="error" sx={{ mb: 2 }}>
-          {error}
+          {validationError}
         </Alert>
       )}
-      {success && (
+      {registerMutation.isError && (
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {registerMutation.error?.message || "Произошла ошибка при подключении к серверу"}
+        </Alert>
+      )}
+      {registerMutation.isSuccess && !registerMutation.data.success && (
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {registerMutation.data.message || "Ошибка регистрации"}
+        </Alert>
+      )}
+      {registerMutation.isSuccess && registerMutation.data.success && (
         <Alert severity="success" sx={{ mb: 2 }}>
-          {success.message || `Добро пожаловать, ${success.user?.username}!`}
+          {registerMutation.data.message ||
+            `Добро пожаловать, ${registerMutation.data.user?.username}!`}
         </Alert>
       )}
 
@@ -81,7 +83,7 @@ export default function Registration() {
         onChange={(e) => {
           setUsername(e.target.value);
         }}
-        disabled={loading}
+        disabled={registerMutation.isPending}
         fullWidth
       />
       <TextField
@@ -93,7 +95,7 @@ export default function Registration() {
         onChange={(e) => {
           setEmail(e.target.value);
         }}
-        disabled={loading}
+        disabled={registerMutation.isPending}
         fullWidth
       />
       <TextField
@@ -105,7 +107,7 @@ export default function Registration() {
         onChange={(e) => {
           setPassword(e.target.value);
         }}
-        disabled={loading}
+        disabled={registerMutation.isPending}
         fullWidth
       />
       <TextField
@@ -117,17 +119,19 @@ export default function Registration() {
         onChange={(e) => {
           setConfirmPassword(e.target.value);
         }}
-        disabled={loading}
+        disabled={registerMutation.isPending}
         fullWidth
       />
       <Button
         color="primary"
         variant="contained"
         onClick={handleRegister}
-        disabled={loading || !username || !email || !password || !confirmPassword}
+        disabled={
+          registerMutation.isPending || !username || !email || !password || !confirmPassword
+        }
         fullWidth
       >
-        {loading ? <CircularProgress size={24} /> : "Зарегистрироваться"}
+        {registerMutation.isPending ? <CircularProgress size={24} /> : "Зарегистрироваться"}
       </Button>
     </div>
   );
