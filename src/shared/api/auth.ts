@@ -34,3 +34,4 @@ export async function register(userData: RegisterRequest): Promise<RegisterRespo
   const data = await response.json();
   return data;
 }
+

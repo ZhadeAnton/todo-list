@@ -5,13 +5,15 @@ import { Button, CircularProgress, Alert } from "@mui/material";
 import { login } from "@shared/api/auth";
 import type { LoginRequest, LoginResponse } from "@shared/mocks/handlers/auth";
 import "./styles.css";
+import { useNavigate } from "react-router-dom";
+
 
 export default function BasicTextFields() {
   const usernameId = useId();
   const passwordId = useId();
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
-
+  const navigate = useNavigate();
   // Используем useMutation для авторизации
   const loginMutation = useMutation<LoginResponse, Error, LoginRequest>({
     mutationFn: login,
@@ -77,7 +79,7 @@ export default function BasicTextFields() {
       <Button
         color="primary"
         variant="contained"
-        onClick={handleLogin}
+        onClick={() => { handleLogin(); navigate("/home"); }}
         disabled={loginMutation.isPending || !name || !password}
         fullWidth
       >

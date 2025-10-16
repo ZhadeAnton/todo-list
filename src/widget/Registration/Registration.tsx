@@ -16,6 +16,24 @@ export default function Registration() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [validationError, setValidationError] = useState<string | null>(null);
+  const validateEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  // Обработчик изменения email
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setEmail(value);
+    
+    // Валидация в реальном времени
+    if (value && !validateEmail(value)) {
+      setValidationError("Введите корректный email адрес");
+    } else {
+      setValidationError(null);
+    }
+  };
+
 
   // Используем useMutation для регистрации
   const registerMutation = useMutation<RegisterResponse, Error, RegisterRequest>({
@@ -92,9 +110,7 @@ export default function Registration() {
         variant="filled"
         type="email"
         value={email}
-        onChange={(e) => {
-          setEmail(e.target.value);
-        }}
+        onChange={handleEmailChange}
         disabled={registerMutation.isPending}
         fullWidth
       />
