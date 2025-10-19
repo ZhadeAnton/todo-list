@@ -1,6 +1,6 @@
 import { Button, CircularProgress } from "@mui/material";
 import "./styles.css";
-import TodoList from "@features/TodoList";
+import TodoList from "@features/ToDoList/TodoList";
 import { getTodos } from "@shared/api/todos";
 import { useQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";

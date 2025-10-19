@@ -6,7 +6,7 @@ const HomePage = lazy(() => import("@pages/Home/HomePage"));
 const LoginPage = lazy(() => import("@pages/Login/LoginPage"));
 
 const routes: RouteObject[] = [
-  { path: "/", element: <Navigate to="/home" replace /> },
+  { path: "/", element: <Navigate to="/login" replace /> },
   { path: "/home", element: <HomePage /> },
   { path: "/login", element: <LoginPage /> },
 ];

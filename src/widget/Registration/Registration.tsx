@@ -1,12 +1,15 @@
 import { useState, useId } from "react";
+import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import TextField from "@mui/material/TextField";
 import { Button, CircularProgress, Alert } from "@mui/material";
 import { register } from "@shared/api/auth";
 import type { RegisterRequest, RegisterResponse } from "@shared/mocks/handlers/auth";
+import { validateEmail, validatePassword, validateRegister, validateUsername } from "@shared/lib/validation";
 import "./styles.css";
 
 export default function Registration() {
+  const navigate = useNavigate();
   const usernameId = useId();
   const emailId = useId();
   const passwordId = useId();
@@ -16,58 +19,17 @@ export default function Registration() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [validationError, setValidationError] = useState<string | null>(null);
-  const validateEmail = (email: string): boolean => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
-
-  // Обработчик изменения email
-  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setEmail(value);
-    
-    // Валидация в реальном времени
-    if (value && !validateEmail(value)) {
-      setValidationError("Введите корректный email адрес");
-    } else {
-      setValidationError(null);
-    }
-  };
-
-
-  // Используем useMutation для регистрации
   const registerMutation = useMutation<RegisterResponse, Error, RegisterRequest>({
     mutationFn: register,
     onSuccess: (data) => {
       if (data.success) {
         console.log("Успешная регистрация:", data);
-        // Очищаем форму после успешной регистрации
       }
     },
     onError: (error) => {
       console.error("Ошибка регистрации:", error);
     },
   });
-
-  const handleRegister = () => {
-    // Валидация
-    if (password !== confirmPassword) {
-      setValidationError("Пароли не совпадают");
-      return;
-    }
-
-    if (password.length < 6) {
-      setValidationError("Пароль должен быть минимум 6 символов");
-      return;
-    }
-
-    setValidationError(null);
-    registerMutation.mutate({
-      username: username,
-      email: email,
-      password: password,
-    });
-  };
 
   return (
     <div className="Registration">
@@ -110,7 +72,14 @@ export default function Registration() {
         variant="filled"
         type="email"
         value={email}
-        onChange={handleEmailChange}
+        onChange={(e) => {
+          setEmail(e.target.value);
+          if (e.target.value && !validateEmail(e.target.value)) {
+            setValidationError("Введите корректный email адрес");
+          } else {
+            setValidationError(null);
+          }
+        }}
         disabled={registerMutation.isPending}
         fullWidth
       />
@@ -122,6 +91,11 @@ export default function Registration() {
         value={password}
         onChange={(e) => {
           setPassword(e.target.value);
+          if (e.target.value && !validatePassword(e.target.value)) {
+            setValidationError("Введите корректный пароль");
+          } else {
+            setValidationError(null);
+          }
         }}
         disabled={registerMutation.isPending}
         fullWidth
@@ -134,6 +108,11 @@ export default function Registration() {
         value={confirmPassword}
         onChange={(e) => {
           setConfirmPassword(e.target.value);
+          if (e.target.value && !validatePassword(e.target.value)) {
+            setValidationError("Введите корректный пароль");
+          } else {
+            setValidationError(null);
+          }
         }}
         disabled={registerMutation.isPending}
         fullWidth
@@ -141,10 +120,8 @@ export default function Registration() {
       <Button
         color="primary"
         variant="contained"
-        onClick={handleRegister}
-        disabled={
-          registerMutation.isPending || !username || !email || !password || !confirmPassword
-        }
+        onClick={() => { if (validateRegister(username, email, password, confirmPassword)) 
+          { registerMutation.mutate({ username: username, email: email, password: password }); navigate("/home"); } }}
         fullWidth
       >
         {registerMutation.isPending ? <CircularProgress size={24} /> : "Зарегистрироваться"}

@@ -10,7 +10,7 @@ const API_BASE_URL = "/api";
 const GET_TODOS_URL = `${API_BASE_URL}/todos`;
 const CREATE_TODO_URL = `${API_BASE_URL}/todos`;
 const UPDATE_TODO_URL = `${API_BASE_URL}/todos/:id`;
-const DELETE_TODO_URL = `${API_BASE_URL}/todos/:id`;
+const DELETE_TODO_URL = `${API_BASE_URL}/todos/`;
 const DELETE_COMPLETED_TODOS_URL = `${API_BASE_URL}/todos/completed`;
 
 // Получить все задачи
@@ -54,7 +54,7 @@ export async function updateTodo(id: string, updates: UpdateTodoRequest): Promis
 
 // Удалить задачу
 export async function deleteTodo(id: string): Promise<TodoResponse> {
-  const response = await fetch(`${DELETE_TODO_URL}`, {
+  const response = await fetch(`${DELETE_TODO_URL}${id}`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
