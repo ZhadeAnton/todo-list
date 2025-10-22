@@ -79,12 +79,12 @@ export async function deleteCompletedTodos(): Promise<TodosResponse> {
 
 // Переключить статус задачи (completed/incomplete)
 export async function toggleTodo(id: string, completed: boolean): Promise<TodoResponse> {
-  const response = await fetch(`${UPDATE_TODO_URL}`, {
+  const response = await fetch(`${UPDATE_TODO_URL.replace(':id', id)}`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ id, completed }),
+    body: JSON.stringify({ completed }),
   });
   const data = await response.json();
   return data;

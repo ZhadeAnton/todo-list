@@ -8,9 +8,8 @@ import { createTodo } from "@shared/api/todos";
 import { useState } from "react";
 import TextField from "@mui/material/TextField";
 import { useQueryClient } from "@tanstack/react-query";
-
+import { TodoInput } from "@features/ToDoInput/TodoInput";
 import { styled } from "@mui/material/styles";
-
 
 export default function HomePage() {
   const queryClient = useQueryClient();
@@ -18,39 +17,12 @@ export default function HomePage() {
     queryKey: ["todos"],
     queryFn: getTodos,
   });
-  const [inputValue, setInputValue] = useState("");
-
-  const { mutate: createTodoMutation, isPending } = useMutation({
-    mutationFn: createTodo,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["todos"] });
-    },
-  });
-  const handleCreateTodo = (text: string) => {
-    createTodoMutation({ text: text });
-    queryClient.invalidateQueries({ queryKey: ["todos"] });
-  };
-
   return (
     <div className="home">
       <h2>Главная</h2>
       <p>Добро пожаловать!</p>
 
-      <TextField
-        id="create-todo"
-        label="Создать задачу"
-        variant="filled"
-        value={inputValue}
-        onChange={(e) => setInputValue(e.target.value)}
-      />
-      <Button
-        color="primary"
-        variant="contained"
-        onClick={() => handleCreateTodo(inputValue)}
-        disabled={isPending}
-      >
-        {isPending ? <CircularProgress size={24} /> : "Добавить задачу"}
-      </Button>
+      <TodoInput />
 
       <TodoList todos={data?.todos} />
     </div>

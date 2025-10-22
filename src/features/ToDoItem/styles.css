@@ -1,7 +1,8 @@
 .TodoItem {
   display: flex;
-  flex-direction: column;
+  flex-direction: row; /* Горизонтальное расположение */
   align-items: center;
+  justify-content: space-between; /* Распределить элементы по краям */
   gap: 10px;
   padding: 5px;
   border: 1px solid #000;
@@ -11,5 +12,6 @@
   margin: auto;
   background-color: #5daae9;
   box-shadow: 0 0 10px 0 rgba(255, 255, 255, 0.1);
- 
+  max-height: 50px;
+  overflow: hidden;
 }
