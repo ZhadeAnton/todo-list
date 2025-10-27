@@ -51,9 +51,9 @@ export default function TodoItem({ todo }: { todo: Todo }) {
         }
 
         label={
-          <h1>
+          <div>
             {todo.text}
-          </h1>
+          </div>
         }
       />
       <Button

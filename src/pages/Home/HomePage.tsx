@@ -1,30 +1,52 @@
-import { Button, CircularProgress } from "@mui/material";
 import "./styles.css";
 import TodoList from "@features/ToDoList/TodoList";
 import { getTodos } from "@shared/api/todos";
 import { useQuery } from "@tanstack/react-query";
-import { useMutation } from "@tanstack/react-query";
-import { createTodo } from "@shared/api/todos";
-import { useState } from "react";
-import TextField from "@mui/material/TextField";
-import { useQueryClient } from "@tanstack/react-query";
 import { TodoInput } from "@features/ToDoInput/TodoInput";
-import { styled } from "@mui/material/styles";
+import { Button } from "@mui/material";
+import { useState } from "react";
+import { menu } from "./config";
+import { AddMenuButton } from "@shared/ui/AddMenuButton";
 
 export default function HomePage() {
-  const queryClient = useQueryClient();
   const { data } = useQuery({
     queryKey: ["todos"],
     queryFn: getTodos,
   });
+
+  const [menuList, setMenuList] = useState(menu);
+  
+  const handleAddMenu = (name: string) => {
+    setMenuList([...menuList, { id: menuList.length + 1, name: name }]);
+  };
+
+  
   return (
     <div className="home">
-      <h2>Главная</h2>
-      <p>Добро пожаловать!</p>
+      <div className="left">
+        <h1>Задачи</h1>
+        <ul>
+  {menuList.map((item) => (
+    <li key={item.id}>
+      <Button 
+        onClick={() => {}}
+        className="menu-button" 
+      >
+        {item.name}
+      </Button>
+    </li>
+  ))}
+</ul>
 
-      <TodoInput />
 
-      <TodoList todos={data?.todos} />
+<AddMenuButton onAdd={handleAddMenu} />
+
+  
+      </div>
+      <div className="right">
+        <TodoInput />
+        <TodoList todos={data?.todos} />
+      </div>
     </div>
   );
 }
