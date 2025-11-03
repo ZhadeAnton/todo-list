@@ -1,28 +1,27 @@
-import { Button, TextField } from "@mui/material";
+import { Button, CircularProgress, TextField } from "@mui/material";
 import { useState } from "react";
 import "./styles.css";
 
 interface AddMenuButtonProps {
   onAdd: (name: string) => void;
+  isPending: boolean;
 }
 
-export function AddMenuButton({ onAdd }: AddMenuButtonProps) {
+export function AddMenuButton({ onAdd, isPending = false }: AddMenuButtonProps) {
   const [showInput, setShowInput] = useState(false);
   const [newMenuName, setNewMenuName] = useState("");
 
   const handleAdd = () => {
-    if (newMenuName.trim()) {
+    if (newMenuName.trim() && !isPending) {
       onAdd(newMenuName.trim());
       setNewMenuName("");
-      setShowInput(false);
+      
     }
   };
 
   return (
     <div className="add-menu-container">
-      <Button  
-         onClick={() => setShowInput(!showInput)}
-      >
+      <Button onClick={() => setShowInput(!showInput)}>
         {showInput ? "Скрыть" : "Добавить задачу"}
       </Button>
 
@@ -34,14 +33,16 @@ export function AddMenuButton({ onAdd }: AddMenuButtonProps) {
             placeholder="Название задачи"
             size="small"
             className="add-menu-textfield"
+            
           />
-          <Button 
-            variant="contained" 
+          <Button
+            variant="contained"
             color="primary"
             onClick={handleAdd}
             className="add-menu-button"
+            disabled={isPending}
           >
-            Добавить
+            {isPending ? <CircularProgress size={16} /> : "Добавить"}
           </Button>
         </div>
       )}

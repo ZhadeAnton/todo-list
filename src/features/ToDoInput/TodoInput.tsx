@@ -1,7 +1,8 @@
-import { Button, CircularProgress, TextField } from "@mui/material";
+import { Button, CircularProgress, IconButton, InputAdornment, TextField } from "@mui/material";
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createTodo } from "@shared/api/todos";
+import AddIcon from "@mui/icons-material/Add";
 
 interface TodoInputProps {
   onSuccess?: () => void;
@@ -43,15 +44,23 @@ export function TodoInput({ onSuccess }: TodoInputProps) {
         onKeyPress={handleKeyPress}
         disabled={isPending}
         fullWidth
-      />
-      <Button
-        color="primary"
-        variant="contained"
-        onClick={handleCreateTodo}
-        disabled={isPending || !inputValue.trim()}
-      >
-        {isPending ? <CircularProgress size={24} /> : "Добавить задачу"}
-      </Button>
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+              <Button
+                onClick={handleCreateTodo}
+                disabled={isPending || !inputValue.trim()}
+                variant="contained"
+                color="primary"
+                size="small"
+                sx={{ minWidth: 'auto', px: 1 }}
+              >
+                {isPending ? <CircularProgress size={16} /> : "Добавить"}
+              </Button>
+            </InputAdornment>
+          ),
+        }}
+></TextField>
     </div>
   );
 }

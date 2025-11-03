@@ -1,10 +1,10 @@
 import type { Todo } from "@shared/mocks/handlers/todos";
-import { Button, CircularProgress, Checkbox, FormControlLabel } from "@mui/material";
+import { Button, CircularProgress, Checkbox, FormControlLabel, IconButton } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteTodo, toggleTodo } from "@shared/api/todos";
 import { Loader } from "@shared/ui/loader";
 import "./styles.css";
-
 
 export default function TodoItem({ todo }: { todo: Todo }) {
   const queryClient = useQueryClient();
@@ -17,7 +17,7 @@ export default function TodoItem({ todo }: { todo: Todo }) {
   });
 
   const toggleTodoMutation = useMutation({
-    mutationFn: ({ id, completed }: { id: string; completed: boolean }) => 
+    mutationFn: ({ id, completed }: { id: string; completed: boolean }) =>
       toggleTodo(id, completed),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["todos"] });
@@ -40,30 +40,31 @@ export default function TodoItem({ todo }: { todo: Todo }) {
       <FormControlLabel
         control={
           toggleTodoMutation.isPending ? (
-            <Loader size="small" />
+            <div className="checkbox">
+              <CircularProgress size={24} />
+            </div>
           ) : (
-          <Checkbox
-            checked={todo.completed}
-            onChange={handleToggle}
-            disabled={toggleTodoMutation.isPending}
-          />
+            <Checkbox
+              checked={todo.completed}
+              onChange={handleToggle}
+              disabled={toggleTodoMutation.isPending}
+            />
           )
         }
-
-        label={
-          <div>
-            {todo.text}
-          </div>
-        }
+        label={<div>{todo.text}</div>}
       />
-      <Button
-        variant="contained"
-        color="error"
+      <IconButton
+        color="primary"
         onClick={handleDelete}
         disabled={deleteTodoMutation.isPending}
+        aria-label="delete"
       >
-        {deleteTodoMutation.isPending ? <CircularProgress size={24} /> : "Удалить"}
-      </Button>
+        {deleteTodoMutation.isPending ? (
+          <CircularProgress size={24} />
+        ) : (
+          <DeleteIcon />
+        )}
+      </IconButton>
     </div>
   );
 }
