@@ -6,6 +6,7 @@ export interface Todo {
   text: string;
   completed: boolean;
   createdAt: string;
+  important: boolean;
 }
 
 export interface CreateTodoRequest {
@@ -15,6 +16,7 @@ export interface CreateTodoRequest {
 export interface UpdateTodoRequest {
   text?: string;
   completed?: boolean;
+  important?: boolean;
 }
 
 export interface TodosResponse {
@@ -36,18 +38,21 @@ let todos: Todo[] = [
     text: "Изучить React",
     completed: false,
     createdAt: new Date().toISOString(),
+    important: false
   },
   {
     id: "2",
     text: "Сверстать форму",
     completed: true,
     createdAt: new Date().toISOString(),
+    important: false
   },
   {
     id: "3",
     text: "Добавить моки для API",
     completed: false,
     createdAt: new Date().toISOString(),
+    important: true
   },
 ];
 
@@ -91,6 +96,7 @@ export const todoHandlers = [
       text: body.text.trim(),
       completed: false,
       createdAt: new Date().toISOString(),
+      important: false,
     };
 
     todos.push(newTodo);
@@ -108,7 +114,7 @@ export const todoHandlers = [
     const body = (await request.json()) as UpdateTodoRequest;
 
     // Симуляция задержки сети
-    await new Promise((resolve) => setTimeout(resolve, 400));
+    await new Promise((resolve) => setTimeout(resolve, 200));
 
     // Находим задачу
     const todoIndex = todos.findIndex((todo) => todo.id === id);
@@ -128,6 +134,7 @@ export const todoHandlers = [
       ...todos[todoIndex],
       ...(body.text !== undefined && { text: body.text.trim() }),
       ...(body.completed !== undefined && { completed: body.completed }),
+      ...(body.important !== undefined && { important: body.important}),
     };
 
     todos[todoIndex] = updatedTodo;

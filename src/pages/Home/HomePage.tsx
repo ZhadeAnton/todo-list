@@ -13,7 +13,7 @@ export default function HomePage() {
 
   return (
     <div className="home">
-      <TodoMenu />
+      <div className="left"> <TodoMenu /></div>
       <div className="right">
         <TodoInput />
         <TodoList todos={data?.todos} />

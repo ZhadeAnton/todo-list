@@ -3,3 +3,6 @@
   color: red;
   padding: 24px;
 }
+li {
+  list-style: none !important;
+ }

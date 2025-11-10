@@ -1,9 +1,9 @@
 import type { Todo } from "@shared/mocks/handlers/todos";
+import { StarIconButton } from "@shared/ui/StarIcon";
 import { Button, CircularProgress, Checkbox, FormControlLabel, IconButton } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteTodo, toggleTodo } from "@shared/api/todos";
-import { Loader } from "@shared/ui/loader";
 import "./styles.css";
 
 export default function TodoItem({ todo }: { todo: Todo }) {
@@ -37,6 +37,8 @@ export default function TodoItem({ todo }: { todo: Todo }) {
 
   return (
     <div className="TodoItem">
+      <StarIconButton id={todo.id} important={todo.important} />
+
       <FormControlLabel
         control={
           toggleTodoMutation.isPending ? (
@@ -53,18 +55,16 @@ export default function TodoItem({ todo }: { todo: Todo }) {
         }
         label={<div>{todo.text}</div>}
       />
-      <IconButton
-        color="primary"
-        onClick={handleDelete}
-        disabled={deleteTodoMutation.isPending}
-        aria-label="delete"
-      >
-        {deleteTodoMutation.isPending ? (
-          <CircularProgress size={24} />
-        ) : (
-          <DeleteIcon />
-        )}
-      </IconButton>
+      <div className="DeleteIcon">
+        <IconButton
+          color="primary"
+          onClick={handleDelete}
+          disabled={deleteTodoMutation.isPending}
+          aria-label="delete"
+        >
+          {deleteTodoMutation.isPending ? <CircularProgress size={24} /> : <DeleteIcon />}
+        </IconButton>
+      </div>
     </div>
   );
 }

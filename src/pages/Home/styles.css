@@ -2,10 +2,15 @@
   padding: 24px;
   display: flex;
   flex-direction: row;
+  gap: 20px;
 }
 
 .right {
   width: 70%;
   height: 100%;
   background-color: #f0f0f0;
+}
+
+.left {
+  padding: 10px;
 }

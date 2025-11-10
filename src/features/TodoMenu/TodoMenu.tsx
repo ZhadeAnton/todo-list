@@ -5,7 +5,6 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import { AddMenuButton } from "@shared/ui/AddMenuButton";
-import { Loader } from "@shared/ui/loader/ui";
 import { Button } from "@shared";
 import { createMenu, deleteMenu, getMenu } from "@shared/api/menu";
 import "./styles.css";
@@ -54,11 +53,11 @@ export default function TodoMenu() {
   }
 
   return (
-    <div className="left">
+    <div>
       <h1>Задачи</h1>
-      <ul>
+      <ul className="todo-menu">
         {isMenuLoading ? (
-          <Loader size="small" />
+          <CircularProgress size={24} />
         ) : (
           menuList?.menu?.map((item) => (
             <li
@@ -72,14 +71,20 @@ export default function TodoMenu() {
               <span className="delete-icon" onClick={() => handleConfirmDeleteMenu(item.id)}>
                 <IconButton
                   color="primary"
-                  disabled={deleteMenuMutation.isPending && deleteMenuMutation.variables === item.id}
+                  disabled={
+                    deleteMenuMutation.isPending && deleteMenuMutation.variables === item.id
+                  }
                   size="small"
                   onClick={(e) => {
                     e.stopPropagation();
                     handleConfirmDeleteMenu(item.id);
                   }}
                 >
-                  {deleteMenuMutation.isPending && deleteMenuMutation.variables === item.id ? (<CircularProgress size={24} />) : (<DeleteIcon />)}
+                  {deleteMenuMutation.isPending && deleteMenuMutation.variables === item.id ? (
+                    <CircularProgress size={24} />
+                  ) : (
+                    <DeleteIcon />
+                  )}
                 </IconButton>
               </span>
 
@@ -98,13 +103,8 @@ export default function TodoMenu() {
                         color="primary"
                         onClick={() => handleDeleteMenu(deleteMenuId as number)}
                         disabled={deleteMenuMutation.isPending}
-                     >
-                          
-                        {deleteMenuMutation.isPending ? (
-                          <CircularProgress size={24} />
-                        ) : (
-                          "Да"
-                        )}
+                      >
+                        {deleteMenuMutation.isPending ? <CircularProgress size={24} /> : "Да"}
                       </Button>
                       <Button color="secondary" onClick={() => setOpen(false)}>
                         Нет

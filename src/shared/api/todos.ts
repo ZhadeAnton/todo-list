@@ -89,3 +89,15 @@ export async function toggleTodo(id: string, completed: boolean): Promise<TodoRe
   const data = await response.json();
   return data;
 }
+
+export async function toggleTodoImportant(id: string, important: boolean): Promise<TodoResponse> {
+  const response = await fetch(`${UPDATE_TODO_URL.replace(':id', id)}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ important }),
+  });
+  const data = await response.json();
+  return data;
+}

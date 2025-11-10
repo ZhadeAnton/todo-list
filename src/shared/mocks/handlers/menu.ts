@@ -46,7 +46,7 @@ export const menuHandlers = [
   // Получить все элементы меню
   http.get("/api/menu", async () => {
     // Симуляция задержки сети
-    await new Promise((resolve) => setTimeout(resolve, 300));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
     return HttpResponse.json<MenuListResponse>({
       success: true,
