@@ -1,0 +1,17 @@
+.modal-style {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    background-color: #fff;
+    border: 2px solid #000;
+    box-shadow: 24;
+    padding: 4px;
+  }
+  
+  .confirm-delete-menu-buttons {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+  }

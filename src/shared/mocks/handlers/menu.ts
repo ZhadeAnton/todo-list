@@ -26,7 +26,7 @@ export interface MenuItemResponse {
 let menuItems: MenuItem[] = [
   {
     id: 1,
-    name: "мой день",
+    name: "Выполнено",
   },
   {
     id: 2,
@@ -34,7 +34,7 @@ let menuItems: MenuItem[] = [
   },
   {
     id: 3,
-    name: "Планирую",
+    name: "Все",
   },
 ];
 

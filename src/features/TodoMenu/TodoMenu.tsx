@@ -1,18 +1,22 @@
 import { useState } from "react";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import Modal from "@mui/material/Modal";
 import { AddMenuButton } from "@shared/ui/AddMenuButton";
-import { Button } from "@shared";
+import { ConfirmModal } from "@shared/ui/modalWindow";
 import { createMenu, deleteMenu, getMenu } from "@shared/api/menu";
-import "./styles.css";
 import { CircularProgress, IconButton } from "@mui/material";
+import "./styles.css";
 
-export default function TodoMenu() {
+type FilterType = "all" | "important" | "completed";
+
+type TodoMenuProps = {
+  filter: FilterType;
+  onFilterChange: (filter: FilterType) => void;
+};
+
+export default function TodoMenu({ filter, onFilterChange }: TodoMenuProps) {
   const [selectedMenu, setSelectedMenu] = useState<number | null>(null);
-  const [isConfirmDeleteMenu, setIsConfirmDeleteMenu] = useState(false);
+  //const [IsConfirmDeleteMenu, setIsConfirmDeleteMenu] = useState(false);
   const [deleteMenuId, setDeleteMenuId] = useState<number | null>(null);
   const [open, setOpen] = useState(false);
 
@@ -29,7 +33,7 @@ export default function TodoMenu() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["menu"] });
       setOpen(false);
-      setIsConfirmDeleteMenu(false);
+      //setIsConfirmDeleteMenu(false);
       setDeleteMenuId(null);
     },
   });
@@ -48,9 +52,32 @@ export default function TodoMenu() {
 
   function handleConfirmDeleteMenu(id: number): void {
     setOpen(true);
-    setIsConfirmDeleteMenu(true);
+    //setIsConfirmDeleteMenu(true);
     setDeleteMenuId(id);
   }
+  function getFilterForMenuId(menuId: number): FilterType | null {
+    if (menuId === 1) return "completed";
+    if (menuId === 2) return "important";
+    if (menuId === 3) return "all";
+    return null;
+  }
+
+
+  function getMenuIdForFilter(Filter: FilterType): number | null {
+    if (Filter === "completed") return 1;
+    if (Filter === "important") return 2;
+    if (Filter === "all") return 3;
+    return null;
+  }
+
+  function handleMenuClick(menuId: number): void {
+    const menuFilter = getFilterForMenuId(menuId);
+    if (menuFilter !== null) {
+      onFilterChange(menuFilter);
+    }
+  }
+
+  const selectedMenuId = getMenuIdForFilter(filter);
 
   return (
     <div>
@@ -62,9 +89,9 @@ export default function TodoMenu() {
           menuList?.menu?.map((item) => (
             <li
               key={item.id}
-              className={`menu-button ${selectedMenu === item.id ? "menu-button-selected" : ""}`}
+              className={`menu-button ${selectedMenuId === item.id ? "menu-button-selected" : ""}`}
             >
-              <div className="menu-button-content" onClick={() => setSelectedMenu(item.id)}>
+              <div className="menu-button-content" onClick={() => handleMenuClick(item.id)}>
                 <p>{item.name}</p>
               </div>
 
@@ -87,38 +114,23 @@ export default function TodoMenu() {
                   )}
                 </IconButton>
               </span>
-
-              {isConfirmDeleteMenu && deleteMenuId === item.id && (
-                <Modal open={open} onClose={() => setOpen(false)}>
-                  <Box
-                    className="modal-style"
-                    aria-labelledby="modal-modal-title"
-                    aria-describedby="modal-modal-description"
-                  >
-                    <Typography id="modal-modal-title" variant="h6" component="h2">
-                      Вы уверены, что хотите удалить это меню?
-                    </Typography>
-                    <div className="confirm-delete-menu-buttons">
-                      <Button
-                        color="primary"
-                        onClick={() => handleDeleteMenu(deleteMenuId as number)}
-                        disabled={deleteMenuMutation.isPending}
-                      >
-                        {deleteMenuMutation.isPending ? <CircularProgress size={24} /> : "Да"}
-                      </Button>
-                      <Button color="secondary" onClick={() => setOpen(false)}>
-                        Нет
-                      </Button>
-                    </div>
-                  </Box>
-                </Modal>
-              )}
             </li>
           ))
         )}
       </ul>
-
       <AddMenuButton onAdd={handleAddMenu} isPending={createMenuMutation.isPending} />
+      {deleteMenuId !== null && (
+        <ConfirmModal
+          open={open}
+          onClose={() => {
+            setOpen(false);
+            setDeleteMenuId(null);
+          }}
+          onConfirm={() => handleDeleteMenu(deleteMenuId)}
+          title="Вы уверены, что хотите удалить это меню?"
+          isLoading={deleteMenuMutation.isPending}
+        />
+      )}
     </div>
   );
 }
